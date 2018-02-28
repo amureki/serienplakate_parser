@@ -1,0 +1,12 @@
+[Unit]
+Description=Telegram Notifier
+After=network.target
+
+[Service]
+Restart=always
+Type=simple
+WorkingDirectory=/root/dev/serienplakate_parser
+ExecStart=/bin/sh -c '/usr/local/bin/pipenv run python3 main.py > /root/dev/serienplakate_parser/output.log 2>&1'
+
+[Install]
+WantedBy=multi-user.target
