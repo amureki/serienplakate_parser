@@ -1,11 +1,12 @@
 import os
 from time import sleep
 
+from requests import HTTPError
 from requests_html import HTML, HTMLSession
 from telegram import Bot
 
 BASE_URL = 'http://serienplakate.de/'
-SLEEP_TIME = os.environ.get('SLEEP_TIME', 5 * 60)
+SLEEP_TIME = os.environ.get('SLEEP_TIME', 10 * 60)
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 TELEGRAM_USER_ID = os.environ.get('TELEGRAM_USER_ID')
 
@@ -25,23 +26,29 @@ class Parser:
             '{}backend/_ajax.php'.format(BASE_URL),
             data={'cmd': 'poster', 'sId': poster_id}
         )
-        response.raise_for_status()
+
+        try:
+            response.raise_for_status()
+        except HTTPError as e:
+            self.send_telegram_message(message='{} errored:{}'.format(BASE_URL, e))
+            raise
+
         html = HTML(html=response.json()['data'])
         buttons = html.find('.buttons')
         to_download_elements = [b.find('.download') for b in buttons]
         to_order_elements = [b.find('.noselect') for b in buttons]
         return len(to_download_elements) != len(to_order_elements)
 
-    def notify_via_telegram(self):
+    def send_telegram_message(self, message):
         bot = Bot(TELEGRAM_BOT_TOKEN)
-        message = 'I\'ve found a free poster to order at {}'.format(BASE_URL)
         bot.send_message(chat_id=TELEGRAM_USER_ID, text=message)
 
     def run(self):
         poster_ids = self.get_poster_ids()
         order_available = any([self.check_poster_availability(pid) for pid in poster_ids])
         if order_available:
-            self.notify_via_telegram()
+            message = 'I\'ve found a free poster to order at {}'.format(BASE_URL)
+            self.send_telegram_message(message=message)
         return order_available
 
 
