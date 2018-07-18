@@ -5,7 +5,7 @@ import requests
 from requests_html import HTML, HTMLSession
 from telegram import Bot
 
-BASE_URL = 'http://serienplakate.de/'
+BASE_URL = 'https://serienplakate.de/'
 SLEEP_TIME = os.environ.get('SLEEP_TIME', 10 * 60)
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 TELEGRAM_USER_ID = os.environ.get('TELEGRAM_USER_ID')
