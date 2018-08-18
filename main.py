@@ -2,6 +2,7 @@ import os
 from time import sleep
 
 import requests
+from lxml.etree import ParserError
 from requests_html import HTML, HTMLSession
 from telegram import Bot
 
@@ -35,7 +36,11 @@ class Parser:
             self.send_telegram_message(message='{} errored:{}'.format(BASE_URL, e))
             raise
 
-        html = HTML(html=response.json()['data'])
+        try:
+            html = HTML(html=response.json()['data'])
+        except ParserError:
+            self.send_telegram_message('ParserError while checking poster {}'.format(poster_id))
+            return 0
         quantity_block = html.find('.count')[0]
         quantity_proportion = quantity_block.text.split(' ')[0]
         quantity_available = int(quantity_proportion.split('/')[0])
