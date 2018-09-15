@@ -1,5 +1,5 @@
 [Unit]
-Description=Telegram Notifier
+Description=serienplakate.de telegram notifier
 After=network.target
 
 [Service]
