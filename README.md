@@ -2,7 +2,10 @@
 
 [serienplakate](http://serienplakate.de/) provides free limited posters for every new Netflix show.
 This script based on [requests-html](https://github.com/kennethreitz/requests-html) parses website and notifies me via [Telegram](https://core.telegram.org/) if there are posters available to order.
+Notifications are being sent to https://t.me/serienplakate_parser channel.
 
+
+## Setup
 You have to provide several environment variables to be able to run this:
 
 ```bash
